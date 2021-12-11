@@ -16,7 +16,10 @@ It is possible for the real owner to sign the message for someone else, allowing
 
 ## Possible mitigations 
 1. The requester can ask sensitive information to be signed, such as government identification numbers.
-If there exists a fake owner, asking the real owner to sign the message would onvolve exposing this information to the real owner, which introduces risk of identity theft for fake ownership.
-Care must be taken so that this information is not compromised  when being transmitted/received by the requester.
-2. In a situation where payments are made in cryptocurrency, the GitHub application can be modified to sign the message using the cryptocurrency wallet to be paid to.
-If a fake owner wants the message signed, they will need to share their cryptocurrency private key with the real owner, which introduces a serious financial risk for faking ownership.
+
+   If there exists a fake owner, asking the real owner to sign the message would onvolve exposing this information to the real owner, which introduces risk of identity theft.
+Care must be taken so that this information is not compromised  when being transmitted/received/at-rest by the requester.
+
+2. Similarly, in a situation where the owner is to be paid in cryptocurrency, the GitHub application can be modified to sign the message using the cryptocurrency wallet to be paid to.
+
+   If a fake owner wants the message signed, they will need to share their cryptocurrency private key with the real owner, which introduces a serious financial risk for faking ownership.
