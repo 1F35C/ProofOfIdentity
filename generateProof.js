@@ -4,9 +4,9 @@ const fs = require('fs');
 PRIVATE_KEY_PATH = 'secrets/id_rsa';
 PUBLIC_KEY_PATH = 'secrets/id_rsa.pub';
 
-function generateMessage(organization, date) {
+function generateMessage(name, date) {
   return 'Proof of 1F35C GitHub User Ownership\n' +
-         'Signed for: ' + organization + '\n' + 
+         'Signed for: ' + name + '\n' + 
          'Date:' + date.toUTCString();
 }
 
@@ -21,27 +21,9 @@ function generateMessage(organization, date) {
     });
     signed = cleartextMessage.toString();
     console.log(signed);
-
-    // TODO: Remove 
-    const publicKey = fs.readFileSync(PUBLIC_KEY_PATH).toString();
-    console.log(await checkKey(signed, publicKey));
-
   } catch(err) {
     console.error(err);
   }
 })(generateMessage('ABC', new Date()));
 
-// Verify 
-async function checkKey(message, publicKeyString) {
-  try {
-    const signedMessage = await openpgp.readCleartextMessage({ cleartextMessage: message });
-    const publicKey = await openpgp.readKey({ armoredKey: publicKeyString });
-    return await openpgp.verify({
-        message: signedMessage,
-        verificationKeys: publicKey
-    });
 
-  } catch(err) {
-    console.error(err);
-  }
-}

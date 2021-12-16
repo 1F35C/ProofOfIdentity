@@ -12,9 +12,9 @@ const PUBLIC_KEY_JS_VARIABLE = 'pubkey';
 
 function wrapAsVariable(variableName, data, isTypescript) {
   if (isTypescript) {
-    return 'const ' + variableName + ': string = `' + data + '`;';
+    return 'export const ' + variableName + ': string = `' + data + '`;';
   }
-  return 'const ' + variableName + ' = `' + data + '`;';
+  return 'export const ' + variableName + ' = `' + data + '`;';
 }
 
 function mkdirForFileIfNotExists(filepath) {
