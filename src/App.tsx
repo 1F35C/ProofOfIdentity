@@ -1,10 +1,11 @@
 import React from 'react';
+import { FC, ReactElement, useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { pubkey } from './id_rsa.pub';
 import * as openpgp from 'openpgp';
 
-async function checkKey(message: string, publicKeyString: string) /*: Promise<openpgp.VerifyMessageResult*/ {
+async function checkKey(message: string, publicKeyString: string) : Promise<boolean> {
   let signedMessage: openpgp.CleartextMessage = await openpgp.readCleartextMessage({ cleartextMessage: message });
   let publicKey: openpgp.PublicKey = await openpgp.readKey({ armoredKey: publicKeyString });
   let verifyOptions: any = {
@@ -76,23 +77,42 @@ fZCzhASsUl6WZSKZDSPOGV5z6WbZifJbnEA=
   }
 })();
 
+enum PGPState {
+  Loading = "_loading",
+  Verified = "_verified",
+  Failed = "_failed"
+}
+
+const ResultBox: FC<{result?: PGPState }> = ({result = PGPState.Loading}): ReactElement => {
+  return (
+    <div>
+    {result}
+    </div>
+  );
+};
+
 function App() {
+  let [message, setMessage] = useState<string | null>(null);
+  let [pgpState, setPgpState] = useState(PGPState.Loading);
+
+  useEffect(() => {
+    if (message !== null) {
+      setPgpState(PGPState.Loading);
+      checkKey(message, pubkey)
+          .then(() => {
+            setPgpState(PGPState.Verified);
+          })
+          .catch(() => {
+            setPgpState(PGPState.Failed);
+          });
+    }
+  }, [message]);
+
+  let resultBox = (message === null) ? null : <ResultBox result={pgpState} />;
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <textarea onChange={(evt) => {setMessage(evt.target.value);}} />
+      {resultBox}
     </div>
   );
 }
