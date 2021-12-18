@@ -6,8 +6,12 @@ import { pubkey } from './id_rsa.pub';
 import * as openpgp from 'openpgp';
 
 async function checkKey(message: string, publicKeyString: string) : Promise<boolean> {
-  let signedMessage: openpgp.CleartextMessage = await openpgp.readCleartextMessage({ cleartextMessage: message });
-  let publicKey: openpgp.PublicKey = await openpgp.readKey({ armoredKey: publicKeyString });
+  if (!message || message.length === 0) {
+    throw new Error("Message is empty");
+  }
+  let signedMessageAsync = await openpgp.readCleartextMessage({ cleartextMessage: message });
+  let publicKeyAsync = openpgp.readKey({ armoredKey: publicKeyString });
+  let [signedMessage, publicKey] = await Promise.all([signedMessageAsync, publicKeyAsync]);
   let verifyOptions: any = {
       message: signedMessage,
       verificationKeys: publicKey,
@@ -78,41 +82,110 @@ fZCzhASsUl6WZSKZDSPOGV5z6WbZifJbnEA=
 })();
 
 enum PGPState {
-  Loading = "_loading",
-  Verified = "_verified",
-  Failed = "_failed"
-}
+  Hidden,
+  Loading,
+  Verified,
+  Failed
+};
 
-const ResultBox: FC<{result?: PGPState }> = ({result = PGPState.Loading}): ReactElement => {
+type PGPResult = {
+  state: PGPState;
+  error: string | undefined;
+};
+
+const ResultBox = (props): JSX.Element => {
+  return (
+    <div className="box centered loading">
+      { props.child }
+    </div>
+  );
+};
+const Loading = (): JSX.Element => {
   return (
     <div>
-    {result}
+      <img className="icon" src="stopwatch.svg" />
+      <br />
+      <span className="status">
+        Loading...
+      </span>
     </div>
   );
 };
 
-function App() {
+const Verified = (): JSX.Element => {
+  return (
+    <div>
+    <img className="icon" src="success.svg" />
+    <br />
+    <span className="status">
+      Success
+    </span>
+    </div>
+  );
+}
+
+const Failed = ({ error } : { error: string }): JSX.Element => {
+  return (
+    <div>
+      <img className="icon" src="error.svg" />
+      <br />
+      <span className="status">
+        Failed
+      </span>
+      <br />
+      <span className="detail">
+        { error }
+      </span>
+    </div>
+  );
+}
+
+function getResultBox(result: PGPResult): JSX.Element {
+  switch (result.state) {
+    case PGPState.Hidden:
+      return (<div />);
+    case PGPState.Loading:
+      return ResultBox({ child: Loading() });
+      break;
+    case PGPState.Verified:
+      return ResultBox({ child: Verified() });
+      break;
+    case PGPState.Failed:
+      return ResultBox({ child: Failed({ error: result.error ?? "unknown" }) });
+      break;
+  }
+}
+
+function App(): ReactElement {
   let [message, setMessage] = useState<string | null>(null);
-  let [pgpState, setPgpState] = useState(PGPState.Loading);
+  let [result, setResult] = useState<PGPResult>({ state: PGPState.Hidden, error: undefined });
 
   useEffect(() => {
     if (message !== null) {
-      setPgpState(PGPState.Loading);
+      setResult({ state: PGPState.Loading, error: undefined });
       checkKey(message, pubkey)
           .then(() => {
-            setPgpState(PGPState.Verified);
+            setResult({ state: PGPState.Verified, error: undefined });
           })
-          .catch(() => {
-            setPgpState(PGPState.Failed);
+          .catch((err) => {
+            setResult({ state: PGPState.Failed, error: err.message });
           });
     }
   }, [message]);
 
-  let resultBox = (message === null) ? null : <ResultBox result={pgpState} />;
   return (
     <div className="App">
-      <textarea onChange={(evt) => {setMessage(evt.target.value);}} />
-      {resultBox}
+      <div className="box">
+        <h1>Signature Verifier</h1>
+      </div>
+      <div className="box">
+        Please paste your signed signature below:
+        <textarea className="signature-field" onChange={(evt) => {setMessage(evt.target.value);}} autofocus="true" />
+      </div>
+      {getResultBox(result)}
+      <div className="box">
+      Description of this webpage
+      </div>
     </div>
   );
 }
