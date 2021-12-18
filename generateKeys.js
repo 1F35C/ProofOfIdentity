@@ -1,6 +1,7 @@
 const openpgp = require('openpgp');
 const fs = require('fs');
 const path = require('path');
+const process = require('process');
 
 const NAME ='1F35C';
 const EMAIL = '95659230+1F35C@users.noreply.github.com';
@@ -9,6 +10,10 @@ const PRIVATE_KEY_PATH = 'secrets/id_rsa';
 const PUBLIC_KEY_PATH = 'secrets/id_rsa.pub';
 const PUBLIC_KEY_JS_PATH = 'src/id_rsa.pub.tsx';
 const PUBLIC_KEY_JS_VARIABLE = 'pubkey';
+
+let settings = {
+  dryrun: false
+};
 
 function wrapAsVariable(variableName, data, isTypescript) {
   if (isTypescript) {
@@ -28,6 +33,13 @@ function getBackupFilepath(filepath) {
 }
 
 function safeWriteFile(filepath, data) {
+    if (settings.dryrun) {
+      console.log(filepath + ":");
+      console.log(data);
+      console.log();
+      return;
+    }
+
     mkdirForFileIfNotExists(PRIVATE_KEY_PATH);
     if (fs.statSync(filepath, { throwIfNoEntry: false })) {
       fs.copyFileSync(filepath, getBackupFilepath(filepath));
@@ -35,20 +47,32 @@ function safeWriteFile(filepath, data) {
     fs.writeFileSync(filepath, data);
 }
 
-// Generate
-(async () => {
-  let { privateKey, publicKey } = await openpgp.generateKey({
-      type: 'rsa',
-      rsaBits: 4096,
-      userIDs: [{ name: NAME, email: EMAIL }],
-      format: 'armored'
+function processArgs(args) {
+  args.forEach((arg) => {
+    switch(arg) {
+      case '--dry-run':
+        settings.dryrun=true;
+        break;
+    }
   });
-  try {
-    safeWriteFile(PUBLIC_KEY_JS_PATH, wrapAsVariable(PUBLIC_KEY_JS_VARIABLE, publicKey));
-    safeWriteFile(PUBLIC_KEY_PATH, publicKey);
-    safeWriteFile(PRIVATE_KEY_PATH, privateKey);
-  } catch(err) {
-    console.error(err);
-  }
-})();
-
+}
+// Generate
+function main(args) {
+  processArgs(args);
+  (async () => {
+    let { privateKey, publicKey } = await openpgp.generateKey({
+        type: 'rsa',
+        rsaBits: 4096,
+        userIDs: [{ name: NAME, email: EMAIL }],
+        format: 'armored'
+    });
+    try {
+      safeWriteFile(PUBLIC_KEY_JS_PATH, wrapAsVariable(PUBLIC_KEY_JS_VARIABLE, publicKey));
+      safeWriteFile(PUBLIC_KEY_PATH, publicKey);
+      safeWriteFile(PRIVATE_KEY_PATH, privateKey);
+    } catch(err) {
+      console.error(err);
+    }
+  })();
+}
+main(process.argv.slice(2));
