@@ -93,16 +93,9 @@ type PGPResult = {
   error: string | undefined;
 };
 
-const ResultBox = (props): JSX.Element => {
-  return (
-    <div className="box centered loading">
-      { props.child }
-    </div>
-  );
-};
 const Loading = (): JSX.Element => {
   return (
-    <div>
+    <div className="box-section centered loading">
       <img className="icon" src="stopwatch.svg" />
       <br />
       <span className="status">
@@ -114,23 +107,23 @@ const Loading = (): JSX.Element => {
 
 const Verified = (): JSX.Element => {
   return (
-    <div>
-    <img className="icon" src="success.svg" />
-    <br />
-    <span className="status">
-      Success
-    </span>
+    <div className="box-section centered loading">
+      <img className="icon" src="success.svg" />
+      <br />
+      <span className="status">
+        Verified
+      </span>
     </div>
   );
 }
 
 const Failed = ({ error } : { error: string }): JSX.Element => {
   return (
-    <div>
+    <div className="box-section centered loading">
       <img className="icon" src="error.svg" />
       <br />
       <span className="status">
-        Failed
+        Verification Failed
       </span>
       <br />
       <span className="detail">
@@ -140,28 +133,30 @@ const Failed = ({ error } : { error: string }): JSX.Element => {
   );
 }
 
-function getResultBox(result: PGPResult): JSX.Element {
+function getResultView(result: PGPResult): JSX.Element {
   switch (result.state) {
     case PGPState.Hidden:
       return (<div />);
     case PGPState.Loading:
-      return ResultBox({ child: Loading() });
+      return Loading();
       break;
     case PGPState.Verified:
-      return ResultBox({ child: Verified() });
+      return Verified();
       break;
     case PGPState.Failed:
-      return ResultBox({ child: Failed({ error: result.error ?? "unknown" }) });
+      return Failed({ error: result.error ?? "unknown" });
       break;
   }
 }
 
 function App(): ReactElement {
-  let [message, setMessage] = useState<string | null>(null);
+  let [message, setMessage] = useState<string>("");
   let [result, setResult] = useState<PGPResult>({ state: PGPState.Hidden, error: undefined });
 
   useEffect(() => {
-    if (message !== null) {
+    if (message === "") {
+      setResult({ state: PGPState.Hidden, error: undefined });
+    } else {
       setResult({ state: PGPState.Loading, error: undefined });
       checkKey(message, pubkey)
           .then(() => {
@@ -176,13 +171,15 @@ function App(): ReactElement {
   return (
     <div className="App">
       <div className="box">
-        <h1>Signature Verifier</h1>
-      </div>
-      <div className="box">
-        Please paste your signed signature below:
-        <textarea className="signature-field" onChange={(evt) => {setMessage(evt.target.value);}} autofocus="true" />
-      </div>
-      {getResultBox(result)}
+				<div className="box-section">
+					<h1>Signature Verifier</h1>
+				</div>
+				<div className="box-section">
+					Please paste your signed signature below:
+					<textarea className="signature-field" onChange={ (evt) => { setMessage(evt.target.value); } } autoFocus={ true } />
+				</div>
+				{getResultView(result)}
+			</div>
       <div className="box">
       Description of this webpage
       </div>

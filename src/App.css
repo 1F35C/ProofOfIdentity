@@ -58,10 +58,16 @@ h1 {
   padding: 15px;
 }
 
+.box-section {
+	padding-top: 10px;
+}
+
 .signature-field {
   width: 100%;
   height: 300px;
   resize: none;
+	margin: 0;
+	padding: 0;
 }
 
 .box .icon {
