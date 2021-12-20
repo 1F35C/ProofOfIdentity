@@ -39,7 +39,7 @@ const Loading = (): JSX.Element => {
       <img className="icon" src="stopwatch.svg" alt=""/>
       <br />
       <span className="status">
-        Loading...
+        Verifying...
       </span>
     </div>
   );
