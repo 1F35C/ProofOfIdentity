@@ -1,3 +1,5 @@
+'use strict';
+
 const openpgp = require('openpgp');
 const fs = require('fs');
 const path = require('path');
@@ -78,20 +80,21 @@ function safeWriteFile(filepath, data) {
 }
 
 function processArgs(args) {
-  args.forEach((arg) => {
-    switch(arg) {
+  for (let idx = 0; idx < args.length; ++idx) {
+    switch(args[idx]) {
       case '--dry-run':
-        settings.dryrun=true;
+        settings.dryrun = true;
         break;
       case '--no-backup':
-        settings.backup=false;
+        settings.backup = false;
         break;
       default:
-        throw new Error('Unknown option: ' + arg);
+        throw new Error('Unknown option: ' + args[idx]);
     }
-  });
+
+  }
 }
-// Generate
+
 function main(args) {
   processArgs(args);
   (async () => {

@@ -1,3 +1,5 @@
+'use strict';
+
 const openpgp = require('openpgp');
 
 exports.sign = async (message, privateKeyText) => {
