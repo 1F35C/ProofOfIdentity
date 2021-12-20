@@ -1,25 +1,29 @@
 # Signature Verifier 
-This GitHub page provides proof of ownership of this GitHub user using digital signature.
+This GitHub page provides a way to verify a message came from the owner of the repository.
 
 ## Process 
-1. Proof of ownership of the GitHub is requested.
-2. The owner will generate a message and a digital signature signed with their private key, then send it to the requester.
-3. The requester can use the GitHub page, which contains the public key, to confirm that the message was signed by the owner.
+1. generateKeys.js is executed. This will create the private/public key pair, and update the webpage with the new public key.
+2. generateProof.js is executed. This will return a message signed using the private key.
+3. This message can be sent to the recipient.
+4. The recipient can use this to check that the message was indeed signed by the owner of the repository.
 
 ## Motivation
-This is an experiment to see if there is a viable method for someone to keep an annonymous GitHub account, but still be able to prove ownership for any potential job applications/collaborations.
+This is an experiment to see if there is a viable method for someone to keep an annonymous GitHub account, but still be able to easily prove ownership for any potential job applications/collaborations.
 
-## Limitations
-This process guarantees that unauthorized third party cannot claim ownership of this GitHub user.
-However, from the requester's perspective, receiving a correct signed message does not necessarily prove that the alleged owner does indeed own the repository.
-It is possible for the real owner to sign the message for someone else, allowing them to take credit as the owner of the GitHub repository, resulting in something like an intentional man-in-the-middle attack.
+Obvious side effect of this is that no one else can masquerade as the owner of this GitHub user (without actually hacking the GitHub account).
 
-## Possible mitigations 
-1. The requester can ask sensitive information to be signed, such as government identification numbers.
+## Additional thoughts on trustless-ness
+From the perspective of the repository owner, this system allows me to sign messages and allow otherse to verify them in a trustless manner.
+However, as a recipient of the signed message, receiving a correctly signed message does not necessarily prove that the sender of the message owns the repository.
+Let's say there is a faker who is trying to fake ownership of this repository, which would normally be impossible, given the strength of RSA.
+If the faker and the real owner are working in concert, the real owner could allow the faker to take credit as the owner of the GitHub repository, by signing messages in their stead.
 
-   If there exists a fake owner, asking the real owner to sign the message would onvolve exposing this information to the real owner, which introduces risk of identity theft.
-Care must be taken so that this information is not compromised  when being transmitted/received/at-rest by the requester.
+**Possible mitigations**
+Because it is not possible to decouple the private key and the ability to sign messages for others, mitigations must come from other sources:
+1. The proof recipient can ask sensitive information to be signed, such as government identification numbers.
 
-2. Similarly, in a situation where the owner is to be paid in cryptocurrency, the GitHub application can be modified to sign the message using the cryptocurrency wallet to be paid to.
+   If there exists a fake owner, asking the real owner to sign the message would involve exposing this information to the real owner, which introduces risk of identity theft.
+
+2. Similarly, in a situation where the cryptocurrency transactions ride on the proof of ownership of the repository (e.g. for contract/employment), the GitHub application can be modified to sign the message using the cryptocurrency wallet to be paid to.
 
    If a fake owner wants the message signed, they will need to share their cryptocurrency private key with the real owner, which introduces a serious financial risk for faking ownership.

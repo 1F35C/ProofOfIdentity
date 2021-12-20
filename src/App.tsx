@@ -133,11 +133,11 @@ function App(): ReactElement {
         </p>
         <h2>Why?</h2>
         <p>
-          Mostly for educational purposes. This was a good chance to learn more about RSA, and how to use it in practice.
+          This page could be useful if I wanted to take credit for this GitHub user in real life without compromising anonymity on the web.
+          For example, I could send a potential customer/employer a signed message that they can verify on this page to verify my authorship.
         </p>
         <p>
-          Later, this could be useful if I wanted to take credit for this GitHub user in real life without compromising anonymity on the web.
-          E.g. Sending a potential employer a signed message that they can verify on this page.
+          Conversely, no one else will not be able to take credit for this GitHub user account either. (I would first need more work on this account to make that worth doing :P)
         </p>
         <h2>How?</h2>
         <p>
