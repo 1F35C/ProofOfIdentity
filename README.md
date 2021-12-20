@@ -13,12 +13,15 @@ This is an experiment to see if there is a viable method for someone to keep an 
 Obvious side effect of this is that no one else can masquerade as the owner of this GitHub user (without actually hacking the GitHub account).
 
 ## Additional thoughts on trustless-ness
-From the perspective of the repository owner, this system allows me to sign messages and allow otherse to verify them in a trustless manner.
-However, as a recipient of the signed message, receiving a correctly signed message does not necessarily prove that the sender of the message owns the repository.
+From the perspective of the repository owner, this system allows me to sign messages and allow others to verify them in a trustless manner.
+
+However, as a recipient of the signed message, receiving a correctly signed message does not necessarily prove that the sender of the message owns the repository, only that they have direct/indirect access to the private key.
+
 Let's say there is a faker who is trying to fake ownership of this repository, which would normally be impossible, given the strength of RSA.
-If the faker and the real owner are working in concert, the real owner could allow the faker to take credit as the owner of the GitHub repository, by signing messages in their stead.
+However, if the faker and the real owner are working in concert, the real owner could allow the faker to take credit as the owner of the GitHub repository, by signing messages in their stead, and they can do this with minimal risk, without sharing the private key or the actual GitHub account.
 
 **Possible mitigations**
+
 Because it is not possible to decouple the private key and the ability to sign messages for others, mitigations must come from other sources:
 1. The proof recipient can ask sensitive information to be signed, such as government identification numbers.
 
