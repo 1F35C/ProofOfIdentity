@@ -159,7 +159,7 @@ function App(): ReactElement {
         For more information, here's the <a href={ GITHUB_URL }>repository</a>!
         <h2>Attributions</h2>
         <ul>
-          <li><a href="">openpgp.js</a> for RSA implementation (key generation/signing/signature verification)</li>
+          <li><a href="https://openpgpjs.org/">openpgp.js</a> for RSA implementation (key generation/signing/signature verification)</li>
           <li><a href="https://www.svgrepo.com/collection/essential-collection/1">svgrepo.com</a> for icons</li>
         </ul>
       </div>
