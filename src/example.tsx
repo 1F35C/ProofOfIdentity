@@ -1,27 +1,25 @@
-export const validExample = `
------BEGIN PGP SIGNED MESSAGE-----
+export const validExample = `-----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA256
 
 This message was signed with the private key that is currently active
 -----BEGIN PGP SIGNATURE-----
 
-wsFzBAEBCAAGBQJhv9MaACEJEMj9xnOaKHr0FiEE6H8MBZ40pv8ygKeYyP3G
-c5ooevQx3xAAgP27FLM60XFV806oiQz/4HeHLbD2ebYUajHxoF9oA+nlt3/o
-EEEz9qdc7mauZ+MnGjvw13OAEda/G80Vtu0MPxM6XZnQFyquHZqxKn54ANkK
-LjoAEyYEMgPVct3EpsYnL9fCl7UXN5Rvyqr54nsy1AeiT1CVCNIQBKRV6a87
-Slx2KeVHqwtWTEG7okr1yvL3XCrPLO2jWMTaSAwfxC+GQNKvA26lZI3dODu5
-KxiqKloKMca4hhk3xvRWWJis5PY1vS4IhcxAckh5BZoVJvw4Ki9o0qL0ehjB
-mdYoz/LcMUGv/cA9xdvTZTklaP6RJd0csdjLBo3a+/nBerESdnnTYeg6ikIS
-uNinpETYeFtp/+w1n5DQwMN6b9eIKxvgYMohBy5i7W1wvRUd0y26lvZp//na
-tSdGSmp1pxNaIrqmA9uXHoVd797CNRk8i6Qw6o3cL5A3gGv3dNYNeBoU25Aq
-7H+/Ajk8zLBCgx9taSNs0ck467oLY1iM9zf/mk0kpJtxHEAB1hDo5MuC61Lq
-IFM/OXwPTbhtdW2Cw09DQOSScG/SnOohzjphLFQeq8uNHT60C0IuJyZRWrPO
-nSu/8PxVwAe5STBlI8KJvcfhKq0AH0fWCtNBSQoyvEJJPZIhoFMgAo/GCjpH
-FK4M8Hj9Wykp5aiOIYSMIYI/lrMob7BLjSM=
-=nXfd
------END PGP SIGNATURE-----
-`;
-export const invalidExample = ` -----BEGIN PGP SIGNED MESSAGE-----
+wsFzBAEBCAAGBQJhv+hxACEJEIrI00XF0ybzFiEEMIXRk1fOMC5FYBFnisjT
+RcXTJvMrtxAAkDuJg3QvYOgK3Mqc6+4RPqmQz2CQe5rtgyltsOh1kqP7OuXb
+jPHAHA/g4mu401CdjIi6Drq5FuzC2gzFfojJ8+7NWuAPkSuDqbSxBEoMfR4G
+/f+WCW2xFhihkG3NAQagjYEqG/Dyil/VVsYU+v34GVT2UVW/jhAtsLSv/btW
+XDZLzu5sheksZh4+FQXLokb5I/HXnk6/CaqUOKwhBeZTaWvBevv9XOFd1EXx
+tqrsrYDGsfksooTP7IuewA43uQOCQDQlpoqoDj8+fRuTgS1iyjbo/d7FHUYS
+bGC28GFCVvpKA6PJwNzXM8Brhd60fJpbau0gXkadlzyTRIRgTP5FufwLO4XE
+a3Ca1mVXl/Ds6qeEhhDJZtiyGj2BgNfTmi9+e/q0GOkTf5jzL8iPEn+1Z4+R
+ge3Iw69ohLt53j0cPemhnoErYbPsmGeJh0hxA464tmnJ7+GDTKYbm76L+eTT
+PtOqBvf9IVhZ0ik14d38mv2iwzKBfaP8UwMHw+2BncCV7Lt1MkMEdHdq6oMZ
+ErxJL8nOmHCcPA9RwqftkXBfkkGwSRSoa/RaD9tkNbfQZ/WgHbP9X7SAwR5v
+gv+oDRffMoh1ARpWuTmCWZdsndfC7Lluj1h/F0USLt3xusW/krI5CEjR9Jy+
+Thl9rc01iVL520o5uk8Sv4D5/YyjUVhT3mE=
+=PTET
+-----END PGP SIGNATURE-----`;
+export const invalidExample = `-----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA256
 
 This message was signed with a different private key

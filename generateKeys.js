@@ -18,7 +18,7 @@ const INVALID_EXAMPLE_VARIABLE = 'invalidExample';
 
 const SIGNED_EXAMPLE_TEXT = "This message was signed with the private key that is currently active";
 const INVALID_EXAMPLE =
-` -----BEGIN PGP SIGNED MESSAGE-----
+`-----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA256
 
 This message was signed with a different private key

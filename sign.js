@@ -7,5 +7,5 @@ exports.sign = async (message, privateKeyText) => {
       message: unsignedMessage,
       signingKeys: privateKey
   });
-  return cleartextMessage.toString();
+  return cleartextMessage.toString().trim();
 }
