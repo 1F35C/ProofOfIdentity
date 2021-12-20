@@ -6,10 +6,6 @@ import { pubkey } from './id_rsa.pub';
 import { validExample, invalidExample } from './example';
 import * as openpgp from 'openpgp';
 
-//TODO: Remove
-console.log(validExample);
-console.log(invalidExample);
-
 async function checkKey(message: string, publicKeyString: string) : Promise<boolean> {
   if (!message || message.length === 0) {
     throw new Error("Message is empty");
@@ -181,7 +177,9 @@ function App(): ReactElement {
 				</div>
 				<div className="box-section">
 					Please paste your signed signature below:
-					<textarea className="signature-field" onChange={ (evt) => { setMessage(evt.target.value); } } autoFocus={ true } />
+					<textarea className="signature-field" onChange={ (evt) => { setMessage(evt.target.value); } } autoFocus={ true } value={ message } />
+          <button onClick={ () => { setMessage(validExample); } }>Valid Example</button>
+          <button onClick={ () => { setMessage(invalidExample); } }>Invalid Example</button>
 				</div>
 				{getResultView(result)}
 			</div>
