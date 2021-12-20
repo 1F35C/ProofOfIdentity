@@ -3,7 +3,12 @@ import { FC, ReactElement, useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { pubkey } from './id_rsa.pub';
+import { validExample, invalidExample } from './example';
 import * as openpgp from 'openpgp';
+
+//TODO: Remove
+console.log(validExample);
+console.log(invalidExample);
 
 async function checkKey(message: string, publicKeyString: string) : Promise<boolean> {
   if (!message || message.length === 0) {
