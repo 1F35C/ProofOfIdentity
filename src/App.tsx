@@ -10,7 +10,12 @@ function getGithubFileURL(filepath: string) {
   return GITHUB_URL + '/blob/main/' + filepath;
 };
 
-async function checkKey(message: string, publicKeyString: string) : Promise<boolean> {
+type VerifyResult = {
+  verified: boolean;
+  signedTime: number;
+};
+
+async function checkKey(message: string, publicKeyString: string) : Promise<VerifyResult> {
   if (!message || message.length === 0) {
     throw new Error("Message is empty");
   }
@@ -23,7 +28,20 @@ async function checkKey(message: string, publicKeyString: string) : Promise<bool
       expectSigned: true
   };
   let result = await openpgp.verify(verifyOptions);
-  return await result.signatures[0].verified;
+  let [verified, signature] = await Promise.all([result.signatures[0].verified, result.signatures[0].signature]);
+
+  var signedTime = 0;
+  if (signature.packets.length > 0) {
+    let packet = signature.packets[0];
+    if (packet.created) {
+      signedTime = packet.created.valueOf();
+    }
+  }
+
+  return {
+    verified: verified,
+    signedTime: signedTime
+  };
 }
 
 enum PGPState {
@@ -35,7 +53,8 @@ enum PGPState {
 
 type PGPResult = {
   state: PGPState;
-  error: string | undefined;
+  signedTime: number;
+  error: string | null;
 };
 
 const AboutBox = (): JSX.Element => {
@@ -92,19 +111,23 @@ const Loading = (): JSX.Element => {
   );
 };
 
-const Verified = (): JSX.Element => {
+const Verified = (params: { signedTime: number }): JSX.Element => {
   return (
     <div className="box-section centered loading">
       <img className="icon" src="success.svg" alt=""/>
       <br />
       <span className="status">
         Verified
+        <br />
+        <span className="detail">
+          Signed on { new Date(params.signedTime).toLocaleString() }
+        </span>
       </span>
     </div>
   );
 }
 
-const Failed = ({ error } : { error: string }): JSX.Element => {
+const Failed = (params: { error: string }): JSX.Element => {
   return (
     <div className="box-section centered loading">
       <img className="icon" src="error.svg" alt=""/>
@@ -114,7 +137,7 @@ const Failed = ({ error } : { error: string }): JSX.Element => {
       </span>
       <br />
       <span className="detail">
-        { error }
+        {params.error }
       </span>
     </div>
   );
@@ -127,7 +150,7 @@ function getResultView(result: PGPResult): JSX.Element {
     case PGPState.Loading:
       return Loading();
     case PGPState.Verified:
-      return Verified();
+      return Verified({ signedTime: result.signedTime ?? 0 });
     case PGPState.Failed:
       return Failed({ error: result.error ?? "unknown" });
     default:
@@ -137,19 +160,20 @@ function getResultView(result: PGPResult): JSX.Element {
 
 function App(): ReactElement {
   let [message, setMessage] = useState<string>("");
-  let [result, setResult] = useState<PGPResult>({ state: PGPState.Hidden, error: undefined });
+  let [result, setResult] = useState<PGPResult>({ state: PGPState.Hidden, signedTime: 0, error: null});
 
   useEffect(() => {
     if (message === "") {
-      setResult({ state: PGPState.Hidden, error: undefined });
+      setResult({ state: PGPState.Hidden, signedTime: 0, error: null });
     } else {
-      setResult({ state: PGPState.Loading, error: undefined });
+      setResult({ state: PGPState.Loading, signedTime: 0, error: null });
       checkKey(message, pubkey)
-          .then(() => {
-            setResult({ state: PGPState.Verified, error: undefined });
+          .then((result) => {
+            let state = result.verified ? PGPState.Verified : PGPState.Failed;
+            setResult({ state: state, signedTime: result.signedTime.valueOf(), error: null });
           })
           .catch((err) => {
-            setResult({ state: PGPState.Failed, error: err.message });
+            setResult({ state: PGPState.Failed, signedTime: 0, error: err.message });
           });
     }
   }, [message]);
