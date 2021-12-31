@@ -38,6 +38,48 @@ type PGPResult = {
   error: string | undefined;
 };
 
+const AboutBox = (): JSX.Element => {
+  return (
+    <div className="box">
+      <h2>What?</h2>
+      <p>
+        This is a webpage where you can check whether a message was written by the owner of this repository.
+      </p>
+      <h2>Why?</h2>
+      <p>
+        This page could be useful if I wanted to take credit for this GitHub user in real life without compromising anonymity on the web.
+        For example, I could send a potential customer/employer a signed message that they can verify on this page to verify my authorship.
+      </p>
+      <p>
+        Conversely, no one else will not be able to take credit for this GitHub user account either. (I would first need more work on this account to make that worth doing :P)
+      </p>
+      <h2>How?</h2>
+      <p>
+        This project uses <a href="https://en.wikipedia.org/wiki/RSA_(cryptosystem)">RSA asymmetric cryptography</a> to verify the source of signed messages.
+      </p>
+      <p>
+        First a private/public key pair is generated using RSA.
+        The private key can be used to sign a message, and the public key can be used to verify the message.
+      </p>
+      <p>
+        The private key should be safeguarded, only accessible to the person signing messages.
+        The public key can be sent out to anyone who wants to verify the message, as the public key cannot be used to sign messages.
+        In this case, the public key is embedded to the webpage for easy signature verification.
+      </p>
+      <ul>
+        <li><a href={ getGithubFileURL('generateKeys.js') }>generateKeys.js</a> is used to generate the private/public key pair, storing the private key in a gitignored directory, and updating JS to use the new public key.</li>
+        <li><a href={ getGithubFileURL('generateProof.js') }>generateProof.js</a> is used to generate a message that is signed with a private key.</li>
+      </ul>
+      For more information, here's the <a href={ GITHUB_URL }>repository</a>!
+      <h2>Attributions</h2>
+      <ul>
+        <li><a href="https://openpgpjs.org/">openpgp.js</a> for RSA implementation (key generation/signing/signature verification)</li>
+        <li><a href="https://www.svgrepo.com/collection/essential-collection/1">svgrepo.com</a> for icons</li>
+      </ul>
+    </div>
+  );
+}
+
 const Loading = (): JSX.Element => {
   return (
     <div className="box-section centered loading">
@@ -81,7 +123,7 @@ const Failed = ({ error } : { error: string }): JSX.Element => {
 function getResultView(result: PGPResult): JSX.Element {
   switch (result.state) {
     case PGPState.Hidden:
-      return (<div />);
+      return (<div className="hidden" />);
     case PGPState.Loading:
       return Loading();
     case PGPState.Verified:
@@ -126,43 +168,7 @@ function App(): ReactElement {
 				</div>
 				{getResultView(result)}
 			</div>
-      <div className="box">
-        <h2>What?</h2>
-        <p>
-          This is a webpage where you can check whether a message was written by the owner of this repository.
-        </p>
-        <h2>Why?</h2>
-        <p>
-          This page could be useful if I wanted to take credit for this GitHub user in real life without compromising anonymity on the web.
-          For example, I could send a potential customer/employer a signed message that they can verify on this page to verify my authorship.
-        </p>
-        <p>
-          Conversely, no one else will not be able to take credit for this GitHub user account either. (I would first need more work on this account to make that worth doing :P)
-        </p>
-        <h2>How?</h2>
-        <p>
-          This project uses <a href="https://en.wikipedia.org/wiki/RSA_(cryptosystem)">RSA asymmetric cryptography</a> to verify the source of signed messages.
-        </p>
-        <p>
-          First a private/public key pair is generated using RSA.
-          The private key can be used to sign a message, and the public key can be used to verify the message.
-        </p>
-        <p>
-          The private key should be safeguarded, only accessible to the person signing messages.
-          The public key can be sent out to anyone who wants to verify the message, as the public key cannot be used to sign messages.
-          In this case, the public key is embedded to the webpage for easy signature verification.
-        </p>
-        <ul>
-          <li><a href={ getGithubFileURL('generateKeys.js') }>generateKeys.js</a> is used to generate the private/public key pair, storing the private key in a gitignored directory, and updating JS to use the new public key.</li>
-          <li><a href={ getGithubFileURL('generateProof.js') }>generateProof.js</a> is used to generate a message that is signed with a private key.</li>
-        </ul>
-        For more information, here's the <a href={ GITHUB_URL }>repository</a>!
-        <h2>Attributions</h2>
-        <ul>
-          <li><a href="https://openpgpjs.org/">openpgp.js</a> for RSA implementation (key generation/signing/signature verification)</li>
-          <li><a href="https://www.svgrepo.com/collection/essential-collection/1">svgrepo.com</a> for icons</li>
-        </ul>
-      </div>
+      <AboutBox />
     </div>
   );
 }
