@@ -12,7 +12,8 @@ function getGithubFileURL(filepath: string) {
 
 type VerifyResult = {
   verified: boolean;
-  signedTime: number;
+  keyCreationTime: number;
+  messageSignedTime: number;
 };
 
 async function checkKey(message: string, publicKeyString: string) : Promise<VerifyResult> {
@@ -22,6 +23,7 @@ async function checkKey(message: string, publicKeyString: string) : Promise<Veri
   let signedMessageAsync = await openpgp.readCleartextMessage({ cleartextMessage: message });
   let publicKeyAsync = openpgp.readKey({ armoredKey: publicKeyString });
   let [signedMessage, publicKey] = await Promise.all([signedMessageAsync, publicKeyAsync]);
+  let keyCreationTime = publicKey.keyPacket.created.valueOf();
   let verifyOptions: any = {
       message: signedMessage,
       verificationKeys: publicKey,
@@ -30,17 +32,18 @@ async function checkKey(message: string, publicKeyString: string) : Promise<Veri
   let result = await openpgp.verify(verifyOptions);
   let [verified, signature] = await Promise.all([result.signatures[0].verified, result.signatures[0].signature]);
 
-  var signedTime = 0;
+  var messageSignedTime = 0;
   if (signature.packets.length > 0) {
     let packet = signature.packets[0];
     if (packet.created) {
-      signedTime = packet.created.valueOf();
+      messageSignedTime = packet.created.valueOf();
     }
   }
 
   return {
     verified: verified,
-    signedTime: signedTime
+    keyCreationTime: keyCreationTime,
+    messageSignedTime: messageSignedTime
   };
 }
 
@@ -53,7 +56,8 @@ enum PGPState {
 
 type PGPResult = {
   state: PGPState;
-  signedTime: number;
+  messageSignedTime: number;
+  keyCreationTime: number;
   error: string | null;
 };
 
@@ -111,17 +115,19 @@ const Loading = (): JSX.Element => {
   );
 };
 
-const Verified = (params: { signedTime: number }): JSX.Element => {
+const Verified = (params: { keyCreationTime: number, messageSignedTime: number }): JSX.Element => {
   return (
     <div className="box-section centered loading">
       <img className="icon" src="success.svg" alt=""/>
       <br />
       <span className="status">
         Verified
+      </span>
+      <br />
+      <span className="detail">
+        Signed on { new Date(params.messageSignedTime).toLocaleString() }
         <br />
-        <span className="detail">
-          Signed on { new Date(params.signedTime).toLocaleString() }
-        </span>
+        Public key created on { new Date(params.keyCreationTime).toLocaleString() }
       </span>
     </div>
   );
@@ -150,7 +156,8 @@ function getResultView(result: PGPResult): JSX.Element {
     case PGPState.Loading:
       return Loading();
     case PGPState.Verified:
-      return Verified({ signedTime: result.signedTime ?? 0 });
+      return Verified({ messageSignedTime: result.messageSignedTime ?? 0,
+                        keyCreationTime: result.keyCreationTime ?? 0 });
     case PGPState.Failed:
       return Failed({ error: result.error ?? "unknown" });
     default:
@@ -160,20 +167,20 @@ function getResultView(result: PGPResult): JSX.Element {
 
 function App(): ReactElement {
   let [message, setMessage] = useState<string>("");
-  let [result, setResult] = useState<PGPResult>({ state: PGPState.Hidden, signedTime: 0, error: null});
+  let [result, setResult] = useState<PGPResult>({ state: PGPState.Hidden, keyCreationTime: 0, messageSignedTime: 0, error: null});
 
   useEffect(() => {
     if (message === "") {
-      setResult({ state: PGPState.Hidden, signedTime: 0, error: null });
+      setResult({ state: PGPState.Hidden, keyCreationTime: 0, messageSignedTime: 0, error: null });
     } else {
-      setResult({ state: PGPState.Loading, signedTime: 0, error: null });
+      setResult({ state: PGPState.Loading, keyCreationTime: 0, messageSignedTime: 0, error: null });
       checkKey(message, pubkey)
           .then((result) => {
             let state = result.verified ? PGPState.Verified : PGPState.Failed;
-            setResult({ state: state, signedTime: result.signedTime.valueOf(), error: null });
+            setResult({ state: state, keyCreationTime: result.keyCreationTime, messageSignedTime: result.messageSignedTime, error: null });
           })
           .catch((err) => {
-            setResult({ state: PGPState.Failed, signedTime: 0, error: err.message });
+            setResult({ state: PGPState.Failed, keyCreationTime: 0, messageSignedTime: 0, error: err.message });
           });
     }
   }, [message]);
