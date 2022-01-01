@@ -196,6 +196,7 @@ function App(): ReactElement {
 					<textarea className="signature-field" onChange={ (evt) => { setMessage(evt.target.value); } } autoFocus={ true } value={ message } />
           <button onClick={ () => { setMessage(validExample); } }>Valid Example</button>
           <button onClick={ () => { setMessage(invalidExample); } }>Invalid Example</button>
+          <button onClick={ () => { setMessage(""); } }>Clear</button>
 				</div>
 				{getResultView(result)}
 			</div>
