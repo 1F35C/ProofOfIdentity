@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/signature-verifier/static/css/main.f59987ef.chunk.css",
-    "main.js": "/signature-verifier/static/js/main.0e210025.chunk.js",
-    "main.js.map": "/signature-verifier/static/js/main.0e210025.chunk.js.map",
+    "main.css": "/signature-verifier/static/css/main.f4fe71de.chunk.css",
+    "main.js": "/signature-verifier/static/js/main.75cba68e.chunk.js",
+    "main.js.map": "/signature-verifier/static/js/main.75cba68e.chunk.js.map",
     "runtime-main.js": "/signature-verifier/static/js/runtime-main.5ad9aa26.js",
     "runtime-main.js.map": "/signature-verifier/static/js/runtime-main.5ad9aa26.js.map",
     "static/js/2.0c677860.chunk.js": "/signature-verifier/static/js/2.0c677860.chunk.js",
@@ -10,13 +10,13 @@
     "static/js/3.2b8ffe9e.chunk.js": "/signature-verifier/static/js/3.2b8ffe9e.chunk.js",
     "static/js/3.2b8ffe9e.chunk.js.map": "/signature-verifier/static/js/3.2b8ffe9e.chunk.js.map",
     "index.html": "/signature-verifier/index.html",
-    "static/css/main.f59987ef.chunk.css.map": "/signature-verifier/static/css/main.f59987ef.chunk.css.map",
+    "static/css/main.f4fe71de.chunk.css.map": "/signature-verifier/static/css/main.f4fe71de.chunk.css.map",
     "static/js/2.0c677860.chunk.js.LICENSE.txt": "/signature-verifier/static/js/2.0c677860.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.5ad9aa26.js",
     "static/js/2.0c677860.chunk.js",
-    "static/css/main.f59987ef.chunk.css",
-    "static/js/main.0e210025.chunk.js"
+    "static/css/main.f4fe71de.chunk.css",
+    "static/js/main.75cba68e.chunk.js"
   ]
 }
