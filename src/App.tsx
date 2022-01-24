@@ -6,7 +6,13 @@ import { validExample, invalidExample } from './example';
 import * as openpgp from 'openpgp';
 
 const GITHUB_URL = "https://github.com/1F35C/signature-verifier";
-function getGithubFileURL(filepath: string) {
+const FULL_REGEX = /-----BEGIN PGP SIGNED MESSAGE-----.*-----BEGIN PGP SIGNATURE-----\s*[A-Za-z0-9+/=]+\s*-----END PGP SIGNATURE-----/;
+const BEGIN_PGP_SIGNATURE = "-----BEGIN PGP SIGNATURE-----";
+const END_PGP_SIGNATURE = "-----END PGP SIGNATURE-----";
+
+const MISFORMED_ARMOR_ERROR = "Unexpected Message Format"
+
+function getGithubFileURL(filepath: string): string {
   return GITHUB_URL + '/blob/main/' + filepath;
 };
 
@@ -16,10 +22,27 @@ type VerifyResult = {
   messageSignedTime: number;
 };
 
+function verifyArmorText(armored: string): boolean {
+  const armoredSingleLine = armored.replace(/[\n\r]+/g, "");
+  if (!FULL_REGEX.test(armoredSingleLine)) {
+    return false;
+  }
+  const beginIdx = armoredSingleLine.indexOf(BEGIN_PGP_SIGNATURE) + BEGIN_PGP_SIGNATURE.length;
+  const endIdx = armoredSingleLine.indexOf(END_PGP_SIGNATURE);
+  return (endIdx - beginIdx) === 761;
+}
+
 async function checkKey(message: string, publicKeyString: string) : Promise<VerifyResult> {
   if (!message || message.length === 0) {
     throw new Error("Message is empty");
   }
+  
+  // There is a bug in openpgp.js where invalid armor message can throw an error that cannot be
+  // caught, due to an uncaught error inside a promise. So we will verify manually.
+  if (!verifyArmorText(message)) {
+    throw new Error(MISFORMED_ARMOR_ERROR);
+  }
+
   let signedMessageAsync = await openpgp.readCleartextMessage({ cleartextMessage: message });
   let publicKeyAsync = openpgp.readKey({ armoredKey: publicKeyString });
   let [signedMessage, publicKey] = await Promise.all([signedMessageAsync, publicKeyAsync]);
